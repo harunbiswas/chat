@@ -4,6 +4,8 @@ const dotenv = require("dotenv");
 const mongoose = require("mongoose");
 const path = require("path");
 const cookieParser = require("cookie-parser");
+const http = require("http");
+const moment = require("moment");
 
 // Internal emports
 const {
@@ -16,12 +18,20 @@ const inboxRouter = require("./router/inboxRouter");
 
 // inetial express
 const app = express();
+const server = http.createServer(app);
 dotenv.config();
+
+// socket creation
+const io = require("socket.io")(server);
+global.io = io;
+
+// set moments as app locals
+app.locals.moment = moment;
 
 // database connection
 mongoose
   .connect(process.env.MONGO_CONNECTION_STRING, {
-    useNewUroParser: true,
+    useNewUrlParser: true,
     useUnifiedTopology: true,
   })
   .then(() => console.log("Database connection connection successfull!"))
